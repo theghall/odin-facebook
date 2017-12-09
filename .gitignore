@@ -7,16 +7,18 @@
 # Ignore bundler config.
 /.bundle
 
-# Ignore the default SQLite database.
-/db/odin_facebook*
-
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+*.swp
+*.*.swp
 
 /node_modules
 /yarn-error.log
 
 .byebug_history
+
+# Ignore application configuration
+/config/application.yml

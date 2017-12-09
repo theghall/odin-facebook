@@ -22,6 +22,8 @@ gem 'coffee-rails', '~> 4.2'
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
+# Keep secrets out of repos
+gem 'figaro', '~>1.1'
 # Authentication
 gem 'devise', '~> 4.3'
 gem 'omniauth-facebook', '~> 4.0'
