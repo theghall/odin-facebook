@@ -78,3 +78,12 @@ p, li {
   margin:0 auto;
   font-size: 1.5em;
 }
+
+/* TODO: remove this when bootstrap gem is for bootstrap 4+ */
+.col-form-label-lg {
+  font-size: 16px
+}
+
+.btn, .social-button {
+  margin: 3px 0;
+}
