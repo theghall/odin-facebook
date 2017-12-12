@@ -1,1 +1,5 @@
-<h1>Welcome to Odin Facebook!</h1>
+<% if !user_signed_in? %>
+  <%= render 'welcome' %>
+<% else %>
+  <h1>Good day Odinite!</h1>
+<% end %>
