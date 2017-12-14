@@ -1,4 +1,6 @@
 class OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include ApplicationHelper
+
   def all
     user = User.from_omniauth(request.env['omniauth.auth'])
 
@@ -13,15 +15,4 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   alias_method :facebook, :all
 
-  private
-
-    def send_welcome(user)
-      dtime = Rails.env.production? ? 'deliver_later' : 'deliver_now'
-
-      OdinBookMailer.welcome(user).send("#{dtime}")
-
-      user.sent_welcome(true)
-
-      user.save
-    end
 end
