@@ -1,0 +1,5 @@
+<%= form_for(@post, url: posts_path) do |f| %>
+  <%= f.text_area :content, id: 'post-text-area', class: 'form-control input-lg', placeholder: 'How have you made yourself worthy today?' %>
+  <%= f.submit 'Post', class: 'btn btn-primary btn-lg' %>
+<% end %>
+

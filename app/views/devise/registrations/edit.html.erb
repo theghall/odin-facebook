@@ -14,6 +14,11 @@
   <% end %>
 
   <div class="field">
+  <%= f.label :name, class: 'col-form-label col-form-label-lg' %><br />
+  <%= f.text_field :name, autofocus: true, class: 'form-control input-lg' %>
+  </div>
+
+  <div class="field">
     <%= f.label :password, class: 'col-form-label col-form-label-lg' %> <i>(leave blank for no change)</i><br />
     <%= f.password_field :password, autocomplete: "off", class: 'form-control input-lg' %>
     <% if @minimum_password_length %>

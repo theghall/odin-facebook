@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  has_many :identities
+  has_many :posts
   after_initialize :defaults
 
   # Include default devise modules. Others available are:
@@ -7,6 +7,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :omniauthable,
          :recoverable, :rememberable, :trackable, :validatable,
          :confirmable
+
+  mount_uploader :profile_pic, ProfilePicUploader
 
   def self.from_omniauth(auth)
     user = self.where(provider: auth.provider, uid: auth.uid).first
@@ -35,7 +37,7 @@ class User < ApplicationRecord
       user.uid = auth.uid
       user.name = auth.info.name
       user.email = auth.info.email
-      user.image = auth.info.image
+      user.remote_profile_pic_url = auth.info.image
       user.oauth_token = auth.credentials.token
       user.oauth_expires_at = Time.at(auth.credentials.expires_at)
       user.skip_confirmation! if user.id.nil?

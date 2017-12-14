@@ -9,6 +9,11 @@
 <%= f.email_field :email, autofocus: true, class: 'form-control input-lg' %>
 </div>
 
+<div class="field">
+<%= f.label :name, class: 'col-form-label col-form-label-lg' %><br />
+<%= f.text_field :name, autofocus: true, class: 'form-control input-lg' %>
+</div>
+
 <% if f.object.password_required? %>
 <div class="field">
   <%= f.label :password, class: 'col-form-label col-form-label-lg' %>

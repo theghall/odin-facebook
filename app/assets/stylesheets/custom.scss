@@ -87,3 +87,43 @@ p, li {
 .btn, .social-button {
   margin: 3px 0;
 }
+
+/* User area */
+
+#post-text-area {
+  width: 300px;
+}
+
+#user-area-info {
+  display:flex;
+}
+
+#user-area-info img {
+  margin: 3px 3px;
+}
+
+#user-area-info * {
+  font-size: 16px;
+  margin-top:auto;
+  margin-bottom:auto;
+}
+
+/* Feed */
+
+.post {
+  margin: 3px 0;
+}
+
+.post-info {
+  display:flex;
+}
+
+.post-info img {
+  margin: 0 3px;
+}
+
+.post-info * {
+  font-size: 16px;
+  margin-top:auto;
+  margin-bottom:auto;
+}
