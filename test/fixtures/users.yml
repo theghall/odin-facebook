@@ -1,7 +1,6 @@
 jack:
   email: 'jack@example.com'
   name: 'Jack'
-  image: 'http://www.example.com/image.png'
   welcome_sent: true
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
   confirmed_at: <%= Time.zone.now %>
@@ -9,7 +8,6 @@ jack:
 john:
   email: 'john@example.com'
   name: 'John'
-  image: 'http://www.example.com/image.png'
   welcome_sent: true
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
   confirmed_at: <%= Time.zone.now %>
@@ -17,7 +15,6 @@ john:
 jill:
   email: 'jill@example.com'
   name: 'Jill'
-  image: 'http://www.example.com/image.png'
   welcome_sent: true
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
   confirmed_at: <%= Time.zone.now %>
