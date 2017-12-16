@@ -1,4 +1,5 @@
 class ComradesController < ApplicationController
+  before_action :logged_in_user
 
   def index
     @comrade_requests = current_user.passive_requests

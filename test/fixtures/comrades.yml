@@ -1,0 +1,4 @@
+jack_follows_jill:
+  follower: jack
+  followed: jill
+  accepted: false
