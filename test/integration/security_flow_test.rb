@@ -23,4 +23,10 @@ class SecurityFlowTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
+
+  test "should render welcome page on profile show if not logged in" do
+    get profile_url(@user)
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
 end

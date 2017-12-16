@@ -1,5 +1,11 @@
 class User < ApplicationRecord
   has_many :posts
+  has_many :active_relationships, -> { accepted }, class_name: 'Comrade', foreign_key: 'follower_id', dependent: :destroy
+  has_many :passive_relationships, -> { accepted }, class_name: 'Comrade', foreign_key: 'followed_id', dependent: :destroy
+  has_many :passive_requests, -> { request }, class_name: 'Comrade', foreign_key: 'followed_id', dependent: :destroy
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower
+  has_many :pending_comrades, through: :passive_requests, source: :pending_follower
   after_initialize :defaults
 
   # Include default devise modules. Others available are:
@@ -18,12 +24,24 @@ class User < ApplicationRecord
     self.grab_oauth_values(auth, user)   
   end
 
+  def self.all_but(user)
+    where.not(id: user.id)
+  end
+
   def password_required?
     super && provider.blank?
   end
 
   def sent_welcome(sent)
     self.welcome_sent = sent
+  end
+
+  def following?(other_user)
+    following.include?(other_user)
+  end
+
+  def follow_pending?(other_user)
+    other_user.pending_comrades.include?(self)
   end
 
   private

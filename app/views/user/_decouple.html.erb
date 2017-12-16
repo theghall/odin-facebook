@@ -1,0 +1,3 @@
+<%= form_for(:comrade, url: comrade_path(@request), method: :delete) do |f| %>
+  <%= f.submit yield(:action), id: 'unfollow-btn', class: 'btn btn-primary btn-lg' %>
+<% end %>

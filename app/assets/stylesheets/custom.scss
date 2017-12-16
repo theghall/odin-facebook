@@ -24,6 +24,10 @@ textarea {
   margin-bottom: 10px;
 }
 
+ol, ul {
+  list-style: none;
+}
+
 /* typography */
 
 h1 {
@@ -86,6 +90,57 @@ p, li {
 
 .btn, .social-button {
   margin: 3px 0;
+}
+
+/* Profile page */
+
+#profile-page-pic, #follow-btn, #unfollow-btn {
+  display: block;
+  margin: auto;
+}
+
+#profile-page-name {
+  text-align: center;
+}
+
+/* Comrade requests */
+
+#comrade-requests {
+ margin: 0;
+ overflow: hidden;
+}
+
+.comrade-row {
+  display: inline-block;
+  overflow: hidden;
+  float: left;
+  clear: left;
+}
+
+.comrade-row .button_to {
+  margin: 0;
+  width: 95px;
+  display: inline-block;
+}
+
+.comrade-info {
+	display: inline-block;
+	overflow: hidden;
+}
+
+.comrade-info img {
+	vertical-align: middle;
+}
+
+.comrade-info p {
+	display: inline-block;
+	margin: 0;
+	width: 70%;
+}
+
+.comrade-info, .manage-request {
+  float: left;
+  width: 195px;
 }
 
 /* User area */

@@ -1,0 +1,17 @@
+<% provide(:title, 'Profile') %>
+<div class='col-md-4'></div>
+<div class='col-md-4'>
+  <div id='profile-wrapper'>
+    <%= image_tag @user.profile_pic.url, id: 'profile-page-pic' %>
+    <p id='profile-page-name'><%= @user.name %></p>
+    <% if current_user.following?(@user) %>
+      <%= render 'unworthy' %>
+    <% elsif current_user.follow_pending?(@user) %>
+      <%= render 'pending' %>
+    <% else %>
+      <%= render 'follow' %>
+    <% end %>
+  </div>
+</div>
+<div class='col-md-5'></div>
+

@@ -1,0 +1,4 @@
+<%= form_for(:comrade, url: comrades_path) do |f| %>
+  <%= f.hidden_field :followed, value: @user.id %>
+  <%= f.submit 'Add Comrade', id: 'follow-btn', class: 'btn btn-lg' %>
+<% end %>
