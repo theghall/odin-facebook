@@ -6,7 +6,7 @@ class StaticPagesController < ApplicationController
 
      @user = current_user
 
-     @posts = @user.posts
+     @posts = User.feed(current_user)
     end
   end
 end

@@ -16,6 +16,12 @@ class User < ApplicationRecord
 
   mount_uploader :profile_pic, ProfilePicUploader
 
+  def self.feed(user)
+    feed_ids = Comrade.where(follower_id: user.id).pluck(:followed_id) << user.id
+
+    Post.where('user_id IN (:feed_ids)', feed_ids: feed_ids.sort!)
+  end
+
   def self.from_omniauth(auth)
     user = self.where(provider: auth.provider, uid: auth.uid).first
 
