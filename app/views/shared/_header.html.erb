@@ -7,7 +7,7 @@
               <ul class='nav navbar-nav navbar-left'>
 		      <li><%= link_to 'Users', profiles_path %></li>
 		      <li><a href="<%= comrades_path %>">Comrade requests 
-				      <span class="badge"><%= current_user.pending_comrades.count %></span></a> </li>
+				      <span class="badge"><%= @request_count %></span></a> </li>
               </ul>
 	    <% end %>
       <ul class='nav navbar-nav navbar-right'>
