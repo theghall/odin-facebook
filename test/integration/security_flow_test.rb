@@ -59,4 +59,16 @@ class SecurityFlowTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
+
+  test "should render welcome page when trying to create a worthy and not logged in" do
+    post post_worthies_url(1)
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
+
+  test "should render welcome page when trying to delete a worthy and not logged in" do
+    delete worthy_url(1)
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
 end

@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_many :posts
+  has_many :worthies, dependent: :destroy
   has_many :relationships_prime, -> { accepted }, class_name: 'Comrade', foreign_key: 'requestor_id', dependent: :destroy
   has_many :relationships_double_prime, -> { accepted }, class_name: 'Comrade', foreign_key: 'requestee_id', dependent: :destroy
   has_many :comrades_prime, through: :relationships_prime, source: :requestee

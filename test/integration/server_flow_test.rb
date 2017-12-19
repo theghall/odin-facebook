@@ -53,4 +53,37 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
     end
     refute_includes @jack.pending_comrades, @jill
   end
+
+  # Worthy flow
+  test "should create a worthy" do
+    sign_in @jill
+    get root_url
+    patch comrade_path(@jack_and_jill.id)
+    post posts_path, params: { post: { content: 'content' }}
+    sign_out @jill
+    sign_in @jack
+    get root_url
+    assert_difference 'Worthy.count', 1 do
+      post = @jill.posts.first
+      post post_worthies_path(post.id)
+      assert_equal 1, post.worthies.count
+    end
+  end
+
+  test "should delete a worthy" do
+    sign_in @jill
+    get root_url
+    patch comrade_path(@jack_and_jill.id)
+    post posts_path, params: { post: { content: 'content' }}
+    sign_out @jill
+    sign_in @jack
+    get root_url
+    post = @jill.posts.first
+    worthy = post.worthies.build(user_id: @jill.id)
+    worthy.save!
+    assert_difference 'Worthy.count', -1 do
+      delete worthy_path(worthy.id)
+      assert_equal 0, post.worthies.count
+    end
+  end
 end

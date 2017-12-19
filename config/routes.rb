@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   get '/profile/:id', to: 'user#show', as: :profile
   get '/profiles', to: 'user#index', as: :profiles
   get '/about', to: 'static_pages#about'
-  resources :posts, only: [:create]
+  resources :posts, only: [:create] do
+    resources :worthies, only: [:create]
+  end
+  resources :worthies, only: [:destroy]
   resources :comrades, only: [:index, :create, :update, :destroy]
 end
