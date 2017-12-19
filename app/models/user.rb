@@ -1,11 +1,13 @@
 class User < ApplicationRecord
   has_many :posts
-  has_many :active_relationships, -> { accepted }, class_name: 'Comrade', foreign_key: 'follower_id', dependent: :destroy
-  has_many :passive_relationships, -> { accepted }, class_name: 'Comrade', foreign_key: 'followed_id', dependent: :destroy
-  has_many :passive_requests, -> { request }, class_name: 'Comrade', foreign_key: 'followed_id', dependent: :destroy
-  has_many :following, through: :active_relationships, source: :followed
-  has_many :followers, through: :passive_relationships, source: :follower
-  has_many :pending_comrades, through: :passive_requests, source: :pending_follower
+  has_many :relationships_prime, -> { accepted }, class_name: 'Comrade', foreign_key: 'requestor_id', dependent: :destroy
+  has_many :relationships_double_prime, -> { accepted }, class_name: 'Comrade', foreign_key: 'requestee_id', dependent: :destroy
+  has_many :comrades_prime, through: :relationships_prime, source: :requestee
+  has_many :comrades_double_prime, through: :relationships_double_prime, source: :requestor
+  has_many :requests, -> { request }, class_name: 'Comrade', foreign_key: 'requestee_id', dependent: :destroy
+  has_many :pending_comrades, through: :requests, source: :requestor
+  
+
   after_initialize :defaults
 
   # Include default devise modules. Others available are:
@@ -17,8 +19,11 @@ class User < ApplicationRecord
   mount_uploader :profile_pic, ProfilePicUploader
 
   def self.feed(user)
-    feed_ids = Comrade.where(follower_id: user.id).pluck(:followed_id)
-    feed_ids << Comrade.where(followed_id: user.id).pluck(:follower_id) << user.id
+    feed_ids = user.comrades_prime.pluck(:requestee_id)
+
+    feed_ids += user.comrades_double_prime.pluck(:requestor_id)
+
+    feed_ids << user.id
 
     Post.where('user_id IN (:feed_ids)', feed_ids: feed_ids.sort!)
   end
@@ -43,11 +48,11 @@ class User < ApplicationRecord
     self.welcome_sent = sent
   end
 
-  def following?(other_user)
-    following.include?(other_user)
+  def comrade?(other_user)
+    comrades_prime.include?(other_user) || comrades_double_prime.include?(other_user)
   end
 
-  def follow_pending?(other_user)
+  def comrade_pending?(other_user)
     other_user.pending_comrades.include?(self)
   end
 

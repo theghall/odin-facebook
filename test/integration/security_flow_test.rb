@@ -43,7 +43,7 @@ class SecurityFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "should render welcome page for making comrade request if not logged in" do
-    post comrades_url, params: { comrade: { followed: 1 }}
+    post comrades_url, params: { comrade: { requestee: 1 }}
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end

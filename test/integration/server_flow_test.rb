@@ -1,13 +1,13 @@
 require 'test_helper'
 
-class ApplicationFlowTest < ActionDispatch::IntegrationTest
+class ServerFlowTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   def setup
     @jack = users(:jack)
     @john = users(:john)
     @jill = users(:jill)
-    @jack_follows_jill = comrades(:jack_follows_jill)
+    @jack_and_jill = comrades(:jack_and_jill)
   end
 
   # Posting flow
@@ -24,32 +24,32 @@ class ApplicationFlowTest < ActionDispatch::IntegrationTest
     sign_in @jack
     get root_url
     refute_includes @john.pending_comrades, @jack
-    refute_includes @john.following, @jack
-    refute_includes @jack.followers, @john
+    refute_includes @john.comrades_prime, @jack
+    refute_includes @jack.comrades_double_prime, @john
     assert_difference 'Comrade.count', 1 do
-      post comrades_path, params: { comrade: { followed: @john.id }}
+      post comrades_path, params: { comrade: { requestee: @john.id }}
     end
     assert_includes @john.pending_comrades, @jack
-    refute_includes @john.following, @jack
-    refute_includes @jack.followers, @john
+    refute_includes @john.comrades_prime, @jack
+    refute_includes @jack.comrades_double_prime, @john
   end
 
-  test "should have user following another user" do
+  test "should have user  user" do
     sign_in @jack
     get root_url
-    refute_includes @jack.following, @jill
-    refute_includes @jill.followers, @jack
-    patch comrade_path(@jack_follows_jill.id)
+    refute_includes @jack.comrades_prime, @jill
+    refute_includes @jill.comrades_double_prime, @jack
+    patch comrade_path(@jack_and_jill.id)
     refute_includes @jack.pending_comrades, @jill
-    assert_includes @jack.following, @jill
-    assert_includes @jill.followers, @jack
+    assert_includes @jack.comrades_prime, @jill
+    assert_includes @jill.comrades_double_prime, @jack
   end
 
-  test "should delete relationship" do
+  test "should delete pending comrade request" do
     sign_in @jack
     get root_url
     assert_difference 'Comrade.count', -1 do
-      delete comrade_path(@jack_follows_jill.id)
+      delete comrade_path(@jack_and_jill.id)
     end
     refute_includes @jack.pending_comrades, @jill
   end

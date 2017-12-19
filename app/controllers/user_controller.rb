@@ -4,7 +4,7 @@ class UserController < ApplicationController
   def show
     @user = User.find(params[:id])
 
-    @request = Comrade.from_profile(params[:id], current_user)
+    @request = Comrade.from_profile(current_user.id, params[:id])
   end
 
   def index

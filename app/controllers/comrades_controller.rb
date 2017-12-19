@@ -2,15 +2,15 @@ class ComradesController < ApplicationController
   before_action :logged_in_user
 
   def index
-    @comrade_requests = current_user.passive_requests
+    @comrade_requests = current_user.requests
   end
 
   def create
-    followed = User.find(comrade_params[:followed])
+    requestee = User.find(comrade_params[:requestee])
 
-    followed.pending_comrades << current_user
+    requestee.pending_comrades << current_user
 
-    redirect_to profile_path(followed)
+    redirect_to profile_path(requestee)
   end
 
   def update
@@ -26,16 +26,16 @@ class ComradesController < ApplicationController
   def destroy
     request = Comrade.find(params[:id])
 
-    followed_id = request.followed_id
+    requestee_id = request.requestee_id
 
     request.delete
 
-    redirect_to profile_path(followed_id)
+    redirect_to profile_path(requestee_id)
   end
 
   private
 
     def comrade_params
-      params.require(:comrade).permit(:followed)
+      params.require(:comrade).permit(:requestee)
     end
 end

@@ -16,14 +16,14 @@ ActiveRecord::Schema.define(version: 20171214034458) do
   enable_extension "plpgsql"
 
   create_table "comrades", force: :cascade do |t|
-    t.integer "follower_id"
-    t.integer "followed_id"
+    t.integer "requestor_id"
+    t.integer "requestee_id"
     t.boolean "accepted"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["followed_id"], name: "index_comrades_on_followed_id"
-    t.index ["follower_id", "followed_id"], name: "index_comrades_on_follower_id_and_followed_id", unique: true
-    t.index ["follower_id"], name: "index_comrades_on_follower_id"
+    t.index ["requestee_id"], name: "index_comrades_on_requestee_id"
+    t.index ["requestor_id", "requestee_id"], name: "index_comrades_on_requestor_id_and_requestee_id", unique: true
+    t.index ["requestor_id"], name: "index_comrades_on_requestor_id"
   end
 
   create_table "posts", force: :cascade do |t|

@@ -1,3 +1,18 @@
 jack_post:
   user: jack
   content: 'My destiny awaits....'
+
+jack_post2:
+  user: jack
+  content: 'More destiny awaits....'
+
+jill_post:
+  user: jill
+  content: "Going up the hill..."
+
+jill_post2:
+  user: jill
+  content: "Going down the hill..."
+
+
+

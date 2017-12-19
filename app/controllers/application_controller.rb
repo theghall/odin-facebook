@@ -13,6 +13,6 @@ class ApplicationController < ActionController::Base
     end
     
     def get_header_info
-      @request_count = current_user.pending_comrades.count
+      @request_count = current_user.requests.count if current_user
     end
 end
