@@ -8,8 +8,10 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     @jill = users(:jill)
     @john = users(:john)
     @jack_and_jill = comrades(:jack_and_jill)
+    @jill_post = posts(:jill_post)
   end
 
+  #header
   test "should have header with all links" do
     sign_in @jack
     get root_url
@@ -28,6 +30,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     assert_select 'a[href=?]', about_path, { count: 1 }
   end
 
+  # user area
   test "should display users profile pic and name" do
     sign_in @jack
     get root_url
@@ -45,6 +48,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # feed
   test "should display posts for user" do
     sign_in @jack
     get root_url
@@ -53,6 +57,25 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should display abutton with link to 'worthy' a post" do
+    sign_in @jack
+    get root_url
+    patch comrade_path(@jack_and_jill.id)
+    get root_url
+    assert_select 'form[action=?]', post_worthies_path(@jill_post.id), { count: 1 }
+  end
+
+  test "should display a button with link to 'un-worthy' a post" do
+    sign_in @jack
+    get root_url
+    patch comrade_path(@jack_and_jill.id)
+    get root_url
+    post post_worthies_path(@jill_post.id)
+    follow_redirect!
+    assert_select 'form[action=?]', worthy_path(worthy_id(@jill_post, @jack)), { count: 1 }
+  end
+
+  # Users
   test "should display a list of users" do
     sign_in @jack
     get root_url
@@ -63,6 +86,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Profile
   test "should display a add comrade button with correct action" do
     sign_in @jack
     get root_url

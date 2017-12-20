@@ -1,6 +1,6 @@
 <% if @posts.any? %>
   <% @posts.each do |p| %>
-    <div class="post">
+    <div class="post border">
       <div class="post-info">
         <%= image_tag p.user.profile_pic.url %>
 	<span>
@@ -9,7 +9,23 @@
 	</span>
        </div>
        <div class="post-content"><p><%= p.content %></p></div>
+       <div class="reactions no-side-border">
+          <% if user_marked_worthy(current_user, p) %>
+            <% worthy_id = Worthy.from_feed(p, current_user) %>
+            <%= form_for(:worthy, url: worthy_path(worthy_id), method: :delete) do %>
+              <%= image_submit_tag('worthy40x40.png') %>
+            <% end %>
+          <% else %>
+            <%= form_for(:worthy, url: post_worthies_path(p.id)) do %>
+              <%= image_submit_tag('worthy40x40.png') %>
+            <% end %>
+	  <% end %>
+       </div>
+       <% if p.worthies.any? %>
+         <div class="reaction-counts">
+		 <span><%= image_tag 'worthy32x32.png', title: worthy_users(p) %><%= worthy_count_text(p) %></span>
+         </div>
+       <% end %>
     </div>
   <% end %>
 <% end %>
-

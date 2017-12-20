@@ -21,6 +21,10 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 end
 
+def worthy_id(post, user)
+  Worthy.where(post_id: post.id, user_id: user.id).pluck(:id)
+end
+
 def get_profile_pic_regex(user)
   file = user.profile_pic.url
 
