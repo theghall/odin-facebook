@@ -71,4 +71,10 @@ class SecurityFlowTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
+
+  test "should render welcome page if post a comment and not logged in" do
+    post post_comments_url(1), params: { comment: { content: 'comment' }}
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
 end

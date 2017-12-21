@@ -41,6 +41,10 @@ class User < ApplicationRecord
     where.not(id: user.id)
   end
 
+  def comrades
+    comrades_prime + comrades_double_prime
+  end
+
   def password_required?
     super && provider.blank?
   end

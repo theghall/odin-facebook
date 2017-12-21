@@ -5,8 +5,10 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
 
   def setup
     @jack = users(:jack)
+    @jack_post = posts(:jack_post)
     @john = users(:john)
     @jill = users(:jill)
+    @jill_post = posts(:jill_post)
     @jack_and_jill = comrades(:jack_and_jill)
   end
 
@@ -85,5 +87,38 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
       delete worthy_path(worthy.id)
       assert_equal 0, post.worthies.count
     end
+  end
+
+  # Comments
+  test "should post a comment on own post" do
+    sign_in @jack
+    get root_url
+    assert_equal 0, @jack_post.comments.count
+    assert_difference 'Comment.count', 1 do
+      post post_comments_path(@jack_post), params: { comment: { content: 'comment' }}
+      follow_redirect!
+    end
+    assert_equal 1, @jack_post.comments.count
+  end
+
+  test "should post a comment on friends post" do
+    sign_in @jack
+    get root_url
+    patch comrade_path(@jack_and_jill.id)
+    assert_equal 0, @jill_post.comments.count
+    assert_difference 'Comment.count', 1 do
+      post post_comments_path(@jill_post), params: { comment: { content: 'comment' }}
+      follow_redirect!
+    end
+    assert_equal 1, @jill_post.comments.count
+  end
+
+  test "should flash alert if non-friend tries to post a comment" do
+    sign_in @john
+    get root_url
+    refute_includes @john.comrades, @jack
+    post post_comments_path(@jack_post), params: { comment: { content: 'comment' }}
+    assert_redirected_to root_url
+    assert_not flash.empty?
   end
 end

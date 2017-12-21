@@ -8,6 +8,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     @jill = users(:jill)
     @john = users(:john)
     @jack_and_jill = comrades(:jack_and_jill)
+    @jack_post = posts(:jack_post)
     @jill_post = posts(:jill_post)
   end
 
@@ -124,5 +125,33 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     assert_select 'form[action=?]', comrade_path(@jack_and_jill.id) do
       assert_select "input[type=submit][value='Delete comrade']"
     end
+  end
+
+  # Comments
+  test "should display comment form below a post" do
+    sign_in @jack
+    get root_url
+    assert_select 'div form[action=?]', post_comments_path(@jack_post) do
+      assert_select "input[type=submit][value='Submit']"
+    end
+  end
+
+  test "should display comment on own post" do
+    comment = 'lorem ipso facto corpas'
+    sign_in @jack
+    get root_url
+    post post_comments_path(@jack_post), params: { comment: { content: comment }}
+    follow_redirect!
+    assert_match comment, response.body
+  end
+
+  test "should display comment on friends post" do
+    comment = 'hocum pocus ipso facto lorem'
+    sign_in @jack
+    get root_url
+    patch comrade_path(@jack_and_jill.id)
+    post post_comments_path(@jill_post), params: { comment: { content: comment }}
+    follow_redirect!
+    assert_match comment, response.body
   end
 end

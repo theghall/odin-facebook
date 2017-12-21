@@ -26,6 +26,25 @@
 		 <span><%= image_tag 'worthy32x32.png', title: worthy_users(p) %><%= worthy_count_text(p) %></span>
          </div>
        <% end %>
+       <div class="comments-wrapper no-side-border">
+        <% if p.comments.any? %>
+           <% p.comments.each do |c| %>
+      	     <div class="comment-info">
+               <%= image_tag c.user.profile_pic.url %>
+               <span>
+                 <%= c.user.name %><br/>
+                 <%= time_ago_in_words(c.created_at) %>
+               </span>
+	     </div>
+             <div class="comment">
+               <%= c.content %>
+             </div>
+	   <% end %>
+	<% end %>
+        <%= form_for(:comment, url: post_comments_path(p)) do |f|  %>
+          <%= f.text_area :content, class: 'form-control input-lg' %>
+          <%= f.submit 'Submit', class: 'btn btn-standard' %>
+        <% end %>
     </div>
   <% end %>
 <% end %>
