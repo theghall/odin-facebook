@@ -1,7 +1,2 @@
-<div id='user-area-info'>
-  <%= image_tag @user.profile_pic.url %>
-  <span>
-    <p><%= @user.name %></p>
-  </span>
-</div>
+<%= render 'shared/profile_pic' %>
 <%= render 'posts/form' %>

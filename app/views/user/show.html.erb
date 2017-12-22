@@ -1,5 +1,5 @@
 <% provide(:title, 'Profile') %>
-<div class='col-md-4'></div>
+<div class='col-md-4'><%= render 'shared/profile_pic' %></div>
 <div class='col-md-4'>
   <div id='profile-wrapper'>
     <%= image_tag @user.profile_pic.url, id: 'profile-page-pic' %>

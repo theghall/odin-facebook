@@ -1,5 +1,5 @@
 <% provide(:title, 'Comrade requests') %>
-<div class='col-md-4'></div>
+<div class='col-md-4'><%= render 'shared/profile_pic' %></div>
 <div class='col-md-8'>
 <% if @comrade_requests.any? %>
   <% @comrade_requests.each do |r| %>
