@@ -10,6 +10,7 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
     @jill = users(:jill)
     @jill_post = posts(:jill_post)
     @jack_and_jill = comrades(:jack_and_jill)
+    @julian = users(:julian)
   end
 
   # Posting flow
@@ -25,42 +26,49 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
   test "should have user with a pending comrade request" do
     sign_in @jack
     get root_url
-    refute_includes @john.pending_comrades, @jack
-    refute_includes @john.comrades_prime, @jack
-    refute_includes @jack.comrades_double_prime, @john
+    refute_includes @julian.pending_comrades, @jack
+    refute_includes @julian.comrades, @jack
     assert_difference 'Comrade.count', 1 do
-      post comrades_path, params: { comrade: { requestee: @john.id }}
+      post comrade_requests_path, params: { comrade: { requestee: @julian.id }}
     end
-    assert_includes @john.pending_comrades, @jack
-    refute_includes @john.comrades_prime, @jack
-    refute_includes @jack.comrades_double_prime, @john
+    assert_includes @julian.pending_comrades, @jack
+    refute_includes @julian.comrades, @jack
   end
 
-  test "should have user  user" do
+  test "should have user be comrades with another user" do
     sign_in @jack
     get root_url
-    refute_includes @jack.comrades_prime, @jill
-    refute_includes @jill.comrades_double_prime, @jack
-    patch comrade_path(@jack_and_jill.id)
-    refute_includes @jack.pending_comrades, @jill
-    assert_includes @jack.comrades_prime, @jill
-    assert_includes @jill.comrades_double_prime, @jack
+    refute_includes @jack.comrades, @jill
+    assert_includes @jill.pending_comrades, @jack
+    patch comrade_request_path(@jack_and_jill)
+    @jack.reload
+    refute_includes @jill.pending_comrades, @jack
+    assert_includes @jack.comrades, @jill
+    assert_includes @jill.comrades, @jack
   end
 
   test "should delete pending comrade request" do
     sign_in @jack
     get root_url
     assert_difference 'Comrade.count', -1 do
-      delete comrade_path(@jack_and_jill.id)
+      delete comrade_request_path(@jack_and_jill)
     end
     refute_includes @jack.pending_comrades, @jill
+  end
+
+  test "should delete an existing comrade relationship" do
+    sign_in @jack
+    get root_url
+    patch comrade_request_path(@jack_and_jill)
+    delete comrade_path(@jack_and_jill)
+    refute_includes @jack.comrades, @jill
   end
 
   # Worthy flow
   test "should create a worthy" do
     sign_in @jill
     get root_url
-    patch comrade_path(@jack_and_jill.id)
+    patch comrade_request_path(@jack_and_jill)
     post posts_path, params: { post: { content: 'content' }}
     sign_out @jill
     sign_in @jack
@@ -75,7 +83,7 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
   test "should delete a worthy" do
     sign_in @jill
     get root_url
-    patch comrade_path(@jack_and_jill.id)
+    patch comrade_request_path(@jack_and_jill)
     post posts_path, params: { post: { content: 'content' }}
     sign_out @jill
     sign_in @jack
@@ -101,10 +109,10 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
     assert_equal 1, @jack_post.comments.count
   end
 
-  test "should post a comment on friends post" do
+  test "should post a comment on comrades post" do
     sign_in @jack
     get root_url
-    patch comrade_path(@jack_and_jill.id)
+    patch comrade_request_path(@jack_and_jill)
     assert_equal 0, @jill_post.comments.count
     assert_difference 'Comment.count', 1 do
       post post_comments_path(@jill_post), params: { comment: { content: 'comment' }}

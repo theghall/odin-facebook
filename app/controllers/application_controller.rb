@@ -14,5 +14,6 @@ class ApplicationController < ActionController::Base
     
     def get_header_info
       @request_count = current_user.requests.count if current_user
+      @comrade_count = current_user.comrades.count if current_user
     end
 end

@@ -1,22 +1,21 @@
-<% provide(:title, 'Comrade requests') %>
+<% provide(:title, 'Comrades') %>
 <div class='col-md-4'></div>
 <div class='col-md-8'>
-<% if @comrade_requests.any? %>
-  <% @comrade_requests.each do |r| %>
+<% if @comrades.any? %>
+  <% @comrades.each do |c| %>
   <div class='comrade-row'>
     <div class='comrade-info'>
-      <% user = r.requestor %>
-      <%= image_tag(user.profile_pic.url) %>
-      <p><%= user.name %></p>
+      <%= image_tag(c.profile_pic.url) %>
+      <p><%= c.name %></p>
     </div>
     <div class='manage-request'>
-      <%= button_to 'Accept', comrade_path(r.id), { method: :patch, class: 'btn btn-primary btn-lg' }  %>
-      <%= button_to 'Delete', comrade_path(r.id), { method: :delete, class: 'btn btn-primary btn-lg' } %>
+      <% request = Comrade.from_profile(current_user.id, c.id) %>
+      <%= button_to 'Delete', comrade_path(request.id), { method: :delete, class: 'btn btn-primary btn-lg' } %>
     </div>
   </div>
 <% end %>
 <% else %>
-  <p>You have no comrade requests.</p>
+  <p>You have no comrades.</p>
   <p>Go do things worthy of being a comrade!</p>
 <% end %>
 </div>

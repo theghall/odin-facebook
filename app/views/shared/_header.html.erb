@@ -6,8 +6,10 @@
 	    <% if user_signed_in? %>
               <ul class='nav navbar-nav navbar-left'>
 		      <li><%= link_to 'Users', profiles_path %></li>
-		      <li><a href="<%= comrades_path %>">Comrade requests 
+		      <li><a href="<%= comrade_requests_path %>">Comrade requests 
 				      <span class="badge"><%= @request_count %></span></a> </li>
+		      <li><a href="<%= comrades_path %>">Comrades 
+				      <span class="badge"><%= @comrade_count %></span></a> </li>
               </ul>
 	    <% end %>
       <ul class='nav navbar-nav navbar-right'>

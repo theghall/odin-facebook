@@ -10,5 +10,6 @@ Rails.application.routes.draw do
     resources :comments, only: [:create]
   end
   resources :worthies, only: [:destroy]
-  resources :comrades, only: [:index, :create, :update, :destroy]
+  resources :comrades, only: [:index, :destroy]
+  resources :comrade_requests, only: [:index, :create, :update, :destroy]
 end

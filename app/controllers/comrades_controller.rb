@@ -1,36 +1,16 @@
 class ComradesController < ApplicationController
+  include ComradeRequestsHelper
+
   before_action :logged_in_user
 
   def index
-    @comrade_requests = current_user.requests
-  end
-
-  def create
-    requestee = User.find(comrade_params[:requestee])
-
-    requestee.pending_comrades << current_user
-
-    redirect_to profile_path(requestee)
-  end
-
-  def update
-    request = Comrade.find(params[:id])
-
-    if !request.update(accepted: true)
-      flash[:alert] = 'Comrade request was not able to be accepted.' 
-    end
-
-    redirect_to comrades_path
+    @comrades = current_user.comrades
   end
 
   def destroy
-    request = Comrade.find(params[:id])
+    destroy_request(params[:id])
 
-    requestee_id = request.requestee_id
-
-    request.delete
-
-    redirect_to profile_path(requestee_id)
+    redirect_back(fallback_location: comrades_path)
   end
 
   private

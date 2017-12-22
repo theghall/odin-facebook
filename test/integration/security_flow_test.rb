@@ -37,25 +37,37 @@ class SecurityFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "should render welcome page for index of comrade requests if not logged in" do
-    get comrades_url
+    get comrade_requests_url
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
 
   test "should render welcome page for making comrade request if not logged in" do
-    post comrades_url, params: { comrade: { requestee: 1 }}
+    post comrade_requests_url, params: { comrade: { requestee: 1 }}
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
 
   test "should render welcome page for updating comrade request if not logged in" do
-    patch comrade_url(1)
+    patch comrade_request_url(1)
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
 
   test "should render welcome page for deleting comrade request if not logged in" do
-    delete comrade_url(1)
+    delete comrade_request_url(1)
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
+
+  test "should render welcome page for viewing a list of comrades if not logged in" do
+    get comrades_url
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
+
+  test "should render welcome page for deleing an existing comrade if not logged in" do
+    delete comrade_path(1)
     follow_redirect!
     assert_template partial: 'static_pages/_welcome'
   end
