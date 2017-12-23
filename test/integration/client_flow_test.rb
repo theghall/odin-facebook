@@ -80,7 +80,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
   end
 
   # Comrades
-  test "should display all comrades" do
+  test "should display all comrades with link to profile and a delete button" do
     sign_in @jack
     get root_url
     patch comrade_request_path(@jack_and_jill)
@@ -90,6 +90,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     get comrades_path
     @jack.comrades.each do |c|
       r = Comrade.from_profile(@jack.id, c.id)
+      assert_select 'a[href=?]', profile_path(c), { value: c.name, count: 1 }
       assert_select 'form[action=?]', comrade_path(r), { value: 'delete', count: 1 }
     end
   end
