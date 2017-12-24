@@ -48,6 +48,12 @@ class SecurityFlowTest < ActionDispatch::IntegrationTest
     assert_template partial: 'static_pages/_welcome'
   end
 
+  test "should render welcome page for showing a request if not logged in" do
+    get comrade_request_url(1)
+    follow_redirect!
+    assert_template partial: 'static_pages/_welcome'
+  end
+
   test "should render welcome page for updating comrade request if not logged in" do
     patch comrade_request_url(1)
     follow_redirect!

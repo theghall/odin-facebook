@@ -1,7 +1,7 @@
 class ComradeRequestsController < ApplicationController
   include ComradeRequestsHelper
 
-  before_action :logged_in_user, only: [:index, :create, :update, :destroy]
+  before_action :logged_in_user, only: [:index, :create, :show, :update, :destroy]
 
   def index
     @comrade_requests = current_user.requests
@@ -23,6 +23,10 @@ class ComradeRequestsController < ApplicationController
     requestee.pending_comrades << current_user
 
     redirect_to profile_path(requestee)
+  end
+
+  def show
+    @request = Comrade.find(params[:id])
   end
 
   def destroy

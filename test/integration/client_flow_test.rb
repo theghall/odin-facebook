@@ -64,7 +64,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
   end
 
   # Comrade requests
-  test "should display all comrade requests" do
+  test "should display all comrade requests with link to profile" do
     sign_in @jack
     get root_url
     @jack.pending_comrades << @jill
@@ -72,6 +72,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     assert_not @jack.requests.empty?
     get comrade_requests_path('requests')
     @jack.requests.each do |r|
+      assert_select 'a[href=?]', profile_path(r.requestor_id)
       assert_select 'form[action=?]', comrade_request_path(r), { count: 2} do
        assert_select "input[type=hidden][value=patch]", { count: 1 }
        assert_select "input[type=hidden][value=delete]", { count: 1 }
@@ -170,6 +171,21 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     get profile_path(@jack)
     assert_select 'form[action=?]', comrade_path(@jack_and_jill) do
       assert_select "input[type=submit][value='Delete comrade']"
+    end
+  end
+
+  test "should display respond to request if friend request pending" do
+    sign_in @jill
+    get root_url
+    assert_not @jill.pending_comrades.empty?
+    get profile_path(@jack)
+    assert_select 'form[action=?][method=get]', comrade_request_path(@jack_and_jill) do
+      assert_select "input[type=submit][value='Respond to request']"
+    end
+    get comrade_request_path(@jack_and_jill)
+    assert_select 'form[action=?]', comrade_request_path(@jack_and_jill), { count: 2} do
+     assert_select "input[type=hidden][value=patch]", { count: 1 }
+     assert_select "input[type=hidden][value=delete]", { count: 1 }
     end
   end
 

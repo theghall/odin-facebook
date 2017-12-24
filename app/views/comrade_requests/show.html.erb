@@ -1,0 +1,6 @@
+<div class="col-md-4"><%= render 'shared/profile_pic' %></div>
+<div class="col-md-8">
+  <div class="comrade-row">
+    <%= render 'request', { user_id: @request.requestor_id, request_id: @request.id } %>
+  </div>
+</div>

@@ -1,4 +1,4 @@
 <%= form_for(:comrade, url: comrade_requests_path) do |f| %>
   <%= f.hidden_field :requestee, value: @user.id %>
-  <%= f.submit 'Add Comrade', id: 'follow-btn', class: 'btn btn-lg' %>
+  <%= f.submit 'Add Comrade', class: 'btn btn-lg comrade-btn' %>
 <% end %>

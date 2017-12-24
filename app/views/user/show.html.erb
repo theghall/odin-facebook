@@ -8,6 +8,8 @@
       <%= render 'unworthy' %>
     <% elsif current_user.comrade_pending?(@user) %>
       <%= render 'pending' %>
+    <% elsif @user.comrade_pending?(current_user) %>
+      <%= button_to 'Respond to request', comrade_request_path(@request), method: :get, class: 'btn btn-standard btn-lg comrade-btn' %>
     <% else %>
       <%= render 'follow' %>
     <% end %>

@@ -11,5 +11,5 @@ Rails.application.routes.draw do
   end
   resources :worthies, only: [:destroy]
   resources :comrades, only: [:index, :destroy]
-  resources :comrade_requests, only: [:index, :create, :update, :destroy]
+  resources :comrade_requests, only: [:index, :create, :show, :update, :destroy]
 end
