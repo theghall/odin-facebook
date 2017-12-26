@@ -8,6 +8,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     @jill = users(:jill)
     @john = users(:john)
     @julian = users(:julian)
+    @jane = users(:jane)
     @jack_and_jill = comrades(:jack_and_jill)
     @jack_and_john = comrades(:jack_and_john)
     @jack_post = posts(:jack_post)
@@ -138,9 +139,9 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
   test "should display a add comrade button with correct action" do
     sign_in @jack
     get root_url
-    get profile_path(@julian)
+    get profile_path(@jane)
     assert_select 'form[action=?]', comrade_requests_path do
-      assert_select "input[type=hidden][name='comrade[requestee]']", { value: @julian.id }
+      assert_select "input[type=hidden][name='comrade[requestee]']", { value: @jane.id }
       assert_select "input[type=submit][value='Add Comrade']"
     end
   end
@@ -148,10 +149,10 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
   test "should display a cancel request button with correct action" do
     sign_in @jack
     get root_url
-    get profile_path(@julian)
-    post comrade_requests_path, params: { comrade: { requestee: @julian.id }}
+    get profile_path(@jane)
+    post comrade_requests_path, params: { comrade: { requestee: @jane.id }}
     follow_redirect!
-    assert_select 'form[action=?]', comrade_request_path(@julian.requests.first) do
+    assert_select 'form[action=?]', comrade_request_path(@jane.requests.first) do
       assert_select "input[type=submit][value='Cancel comrade request']" 
     end
   end
