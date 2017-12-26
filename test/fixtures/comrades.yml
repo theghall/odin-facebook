@@ -1,7 +1,9 @@
 jack_and_jill:
   requestor: jack
   requestee: jill
+  accepted: false
 
 jack_and_john:
   requestor: jack
   requestee: john
+  accepted: false
