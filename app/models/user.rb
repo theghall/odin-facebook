@@ -45,6 +45,10 @@ class User < ApplicationRecord
     comrades_prime + comrades_double_prime
   end
 
+  def common_comrades_with(user)
+    comrades & user.comrades
+  end
+
   def password_required?
     super && provider.blank?
   end

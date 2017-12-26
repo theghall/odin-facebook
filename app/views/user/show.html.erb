@@ -3,7 +3,12 @@
 <div class='col-md-4'>
   <div id='profile-wrapper'>
     <%= image_tag @user.profile_pic.url, id: 'profile-page-pic' %>
-    <p id='profile-page-name'><%= @user.name %></p>
+    <p class="center"'><%= @user.name %></p>
+    <% if @common_comrades.any? %>
+      <p class="center">Common comrades: <%= make_list(@common_comrades) %></p>
+    <% else %>
+     <p class="center">No comrades in common</p>
+    <% end %>
     <% if current_user.comrade?(@user) %>
       <%= render 'unworthy' %>
     <% elsif current_user.comrade_pending?(@user) %>
