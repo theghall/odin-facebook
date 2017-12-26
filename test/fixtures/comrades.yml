@@ -7,3 +7,13 @@ jack_and_john:
   requestor: jack
   requestee: john
   accepted: false
+
+julian_and_jack:
+  requestor: julian
+  requestee: jack
+  accepted: false
+
+joe_and_jack:
+  requestor: joe
+  requestee: jack
+  accepted: false

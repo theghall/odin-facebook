@@ -10,7 +10,30 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
     @jill = users(:jill)
     @jill_post = posts(:jill_post)
     @jack_and_jill = comrades(:jack_and_jill)
+    @joe_and_jack = comrades(:joe_and_jack)
     @julian = users(:julian)
+  end
+
+  # Test dependent destroy
+  test "should not raise exeception when canceling acct" do
+    sign_in @jack
+    patch comrade_request_path(@jack_and_jill)
+    patch comrade_request_path(@joe_and_jack)
+    post post_worthies_path(@jack_post)
+    post post_comments_path(@jack_post), params: { comment: { content: 'comment' }}
+    @jack.reload
+    assert @jack.sent_requests.any?
+    assert @jack.requests.any?
+    assert @jack.relationships_prime.any?
+    assert @jack.relationships_double_prime.any?
+    assert @jack.posts.any?
+    assert @jack.worthies.any?
+    assert @jack.comments.any?
+    assert_nothing_raised do
+      assert_difference 'User.count', -1 do
+        @jack.destroy
+      end
+    end 
   end
 
   # Posting flow
