@@ -6,6 +6,7 @@ class Comrade < ApplicationRecord
 
   validates :requestor_id, presence: true
   validates :requestee_id, presence: true
+  validate :requestee_id, :no_inverse_relation
 
   scope :request, -> { where(:accepted => false) }
   scope :accepted, -> { where(:accepted => true) }
@@ -18,6 +19,12 @@ class Comrade < ApplicationRecord
 
     def defaults
       self.accepted = false if self.accepted.nil?
+    end
+
+    def no_inverse_relation
+      request = Comrade.find_by(requestor_id: self.requestee_id, requestee_id: self.requestor_id)
+
+      errors[:base] << 'A relation already exists with that user' unless request.nil?
     end
 
 end

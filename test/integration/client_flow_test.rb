@@ -9,6 +9,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     @john = users(:john)
     @julian = users(:julian)
     @jane = users(:jane)
+    @jorge = users(:jorge)
     @jack_and_jill = comrades(:jack_and_jill)
     @jack_and_john = comrades(:jack_and_john)
     @jack_post = posts(:jack_post)
@@ -68,8 +69,8 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
   test "should display all comrade requests with link to profile" do
     sign_in @jack
     get root_url
-    @jack.pending_comrades << @jill
-    @jack.pending_comrades << @john
+    @jack.pending_comrades << @jane
+    @jack.pending_comrades << @jorge
     assert_not @jack.requests.empty?
     get comrade_requests_path('requests')
     @jack.requests.each do |r|
@@ -216,5 +217,66 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     post post_comments_path(@jill_post), params: { comment: { content: comment }}
     follow_redirect!
     assert_match comment, response.body
+  end
+
+  # Race conditions
+  test "should catch race condition where two users make comrade requests to each other" do
+    skip 
+    begin
+      assert_equal 5, ActiveRecord::Base.connection.pool.size
+      concurrency_level = 2
+      should_wait = true
+
+      status = {}
+      wait_post = [true, true]
+
+      threads = Array.new(concurrency_level) do |i|
+        Thread.new do
+          # wait for both threads to be initialized
+          true while should_wait
+            if i == 0
+              sign_in @jack
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[1] = false
+              true while wait_post[0]
+              get profile_path(@jane)
+              post comrade_requests_path, params: { comrade: { requestee: @jane.id }}
+              follow_redirect!
+              status[i] = @jill.pending_comrades.include?(@jack)
+              unless status[i]
+                assert_not flash.empty?
+                assert_select 'form[action=?][method=get]', comrade_request_path(Comrade.from_profile(@jack.id, @jill.id)) do
+                  assert_select "input[type=submit][value='Respond to request']"
+                end
+              end
+              sign_out @jack
+            elsif i == 1
+              sign_in @jane
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[0] = false
+              true while wait_post[1]
+              get profile_path(@jack)
+              post comrade_requests_path, params: { comrade: { requestee: @jack.id }}
+              follow_redirect!
+              status[i] = @jack.pending_comrades.include?(@jill)
+              unless status[i]
+                assert_not flash.empty?
+                assert_select 'form[action=?][method=get]', comrade_request_path(Comrade.from_profile(@jill.id, @jack.id)) do
+                  assert_select "input[type=submit][value='Respond to request']"
+                end
+              end
+              sign_out @jane
+            end
+        end
+      end
+      should_wait = false
+      threads.each(&:join)
+
+      assert status[0] != status[1]
+    ensure
+      ActiveRecord::Base.connection_pool.disconnect!
+    end
   end
 end

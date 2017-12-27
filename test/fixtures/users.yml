@@ -39,3 +39,10 @@ jane:
   welcome_sent: true
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
   confirmed_at: <%= Time.zone.now %>
+
+jorge:
+  email: 'jorge@example.com'
+  name: 'Jorge'
+  welcome_sent: true
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  confirmed_at: <%= Time.zone.now %>

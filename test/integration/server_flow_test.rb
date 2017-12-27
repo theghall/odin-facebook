@@ -8,6 +8,7 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
     @jack_post = posts(:jack_post)
     @john = users(:john)
     @jill = users(:jill)
+    @jane = users(:jane)
     @jill_post = posts(:jill_post)
     @jack_and_jill = comrades(:jack_and_jill)
     @joe_and_jack = comrades(:joe_and_jack)
@@ -49,13 +50,13 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
   test "should have user with a pending comrade request" do
     sign_in @jack
     get root_url
-    refute_includes @julian.pending_comrades, @jack
-    refute_includes @julian.comrades, @jack
+    refute_includes @jane.pending_comrades, @jack
+    refute_includes @jane.comrades, @jack
     assert_difference 'Comrade.count', 1 do
-      post comrade_requests_path, params: { comrade: { requestee: @julian.id }}
+      post comrade_requests_path, params: { comrade: { requestee: @jane.id }}
     end
-    assert_includes @julian.pending_comrades, @jack
-    refute_includes @julian.comrades, @jack
+    assert_includes @jane.pending_comrades, @jack
+    refute_includes @jane.comrades, @jack
   end
 
   test "should have user be comrades with another user" do
@@ -151,5 +152,51 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
     post post_comments_path(@jack_post), params: { comment: { content: 'comment' }}
     assert_redirected_to root_url
     assert_not flash.empty?
+  end
+
+  # Race conditions
+  test "should catch race condition where two users make comrade requests to each other" do
+    begin
+      assert_equal 5, ActiveRecord::Base.connection.pool.size
+      concurrency_level = 2
+      should_wait = true
+
+      status = {}
+      wait_post = [true, true]
+
+      threads = Array.new(concurrency_level) do |i|
+        Thread.new do
+          # wait for both threads to be initialized
+          true while should_wait
+            if i == 0
+              sign_in @jack
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[1] = false
+              true while wait_post[0]
+              post comrade_requests_path, params: { comrade: { requestee: @jane.id }}
+              sign_out @jack
+              @jack.reload
+              status[i] = @jill.pending_comrades.include?(@jack)
+            elsif i == 1
+              sign_in @jane
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[0] = false
+              true while wait_post[1]
+              post comrade_requests_path, params: { comrade: { requestee: @jack.id }}
+              sign_out @jane
+              @jane.reload
+              status[i] = @jack.pending_comrades.include?(@jill)
+            end
+        end
+      end
+      should_wait = false
+      threads.each(&:join)
+
+      assert status[0] != status[1]
+    ensure
+      ActiveRecord::Base.connection_pool.disconnect!
+    end
   end
 end

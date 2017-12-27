@@ -10,6 +10,7 @@ end
 gem 'rails', '~> 5.1.4'
 # Use Postgres for the AR DB
 gem 'pg', '~> 0.21'
+gem 'with_advisory_lock', '~>3.2'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets

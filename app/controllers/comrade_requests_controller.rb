@@ -20,7 +20,13 @@ class ComradeRequestsController < ApplicationController
   def create
     requestee = User.find(comrade_request_params[:requestee])
 
-    requestee.pending_comrades << current_user
+    Comrade.with_advisory_lock('comrade_request') do
+      begin
+        requestee.pending_comrades << current_user
+      rescue ActiveRecord::RecordInvalid
+        flash[:alert] = 'That user sent you a request'
+      end
+    end
 
     redirect_to profile_path(requestee)
   end
