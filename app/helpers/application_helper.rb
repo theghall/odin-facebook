@@ -16,4 +16,17 @@ module ApplicationHelper
 
     user.save
   end
+
+  def isa_comrade
+    @post = Post.find(params[:post_id])
+
+    post_author = User.find(@post.user_id)
+
+    redirect_to root_url, alert: 'You must be friends to comment.' \
+      unless post_author == current_user || post_author.comrades.include?(current_user)
+  end
+
+  def comrade_request
+    'comrade_request'
+  end
 end

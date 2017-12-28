@@ -1,5 +1,5 @@
 class ComradeRequestsController < ApplicationController
-  include ComradeRequestsHelper
+  include ApplicationHelper, ComradeRequestsHelper
 
   before_action :logged_in_user, only: [:index, :create, :show, :update, :destroy]
 
@@ -18,17 +18,19 @@ class ComradeRequestsController < ApplicationController
   end
 
   def create
-    requestee = User.find(comrade_request_params[:requestee])
+    requestee = User.find_by(id: comrade_request_params[:requestee])
 
-    Comrade.with_advisory_lock('comrade_request') do
+    flash[:alert] = 'That user no longer exists' if requestee.nil?
+
+    Comrade.with_advisory_lock(comrade_request) do
       begin
-        requestee.pending_comrades << current_user
+        requestee.pending_comrades << current_user unless requestee.nil?
       rescue ActiveRecord::RecordInvalid
         flash[:alert] = 'That user sent you a request'
       end
     end
 
-    redirect_to profile_path(requestee)
+    redirect_to (requestee.nil? ? profiles_path : profile_path(requestee))
   end
 
   def show
@@ -36,9 +38,13 @@ class ComradeRequestsController < ApplicationController
   end
 
   def destroy
-    requestee_id = destroy_request(params[:id])
+    begin
+      requestee_id = destroy_request(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      flash[:alert] = "The other user aleady performed that action"
+    end
 
-    redirect_to profile_path(requestee_id)
+    redirect_to (requestee_id.nil? ? profiles_path : profile_path(requestee_id))
   end
 
   private

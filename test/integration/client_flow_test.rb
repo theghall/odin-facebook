@@ -279,4 +279,52 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
       ActiveRecord::Base.connection_pool.disconnect!
     end
   end
+
+  test "should put user on profiles page and flash message if other user deletes account" do
+    sign_in @jorge
+    get root_url
+    delete user_registration_path
+    sign_in @jack
+    get root_url
+    post comrade_requests_path, params: {comrade: {requesteee: @jorge.id }}
+    assert_redirected_to profiles_path
+    assert_not flash.empty?
+  end
+
+  test "should redirect user who cancels request if other deletes request" do
+    sign_in @jack
+    get root_url
+    delete comrade_request_path(@jack_and_jill.id)
+    sign_out @jack
+    sign_in @jill
+    delete comrade_request_path(@jack_and_jill.id)
+    assert_redirected_to profiles_path
+    assert_not flash.empty?
+    sign_out @jill
+  end
+
+  test "should redirect user who worthies a post if other user deletes relationship" do
+    sign_in @jack
+    get root_url
+    delete comrade_request_path(@jack_and_jill.id)
+    sign_out @jack
+    sign_in @jill
+    post post_worthies_path(@jack_post.id)
+    assert_redirected_to root_url
+    assert_not flash.empty?
+    sign_out @jill
+  end
+
+  test "should redirect user who comments on a post if other user deletes relationship" do
+    sign_in @jack
+    get root_url
+    delete comrade_request_path(@jack_and_jill.id)
+    sign_out @jack
+    sign_in @jill
+    post post_comments_path(@jack_post), params: { comment: { content: "comment" }}
+    assert_redirected_to root_url
+    assert_not flash.empty?
+    sign_out @jill
+
+  end
 end

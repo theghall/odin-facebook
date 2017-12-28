@@ -199,4 +199,89 @@ class ServerFlowTest < ActionDispatch::IntegrationTest
       ActiveRecord::Base.connection_pool.disconnect!
     end
   end
+
+  test "should catch race condition where one user makes a request to a user canceling account" do
+    begin
+      assert_equal 5, ActiveRecord::Base.connection.pool.size
+      concurrency_level = 2
+      should_wait = true
+
+      status = {}
+      wait_post = [true, true]
+
+      threads = Array.new(concurrency_level) do |i|
+        Thread.new do
+          # wait for both threads to be initialized
+          true while should_wait
+            if i == 0
+              sign_in @jack
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[1] = false
+              true while wait_post[0]
+              post comrade_requests_path, params: { comrade: { requestee: @jane.id }}
+              status[0] = (Comrade.find_by(requestor_id: @jack.id, requestee_id: @jane.id).nil? == false)
+              sign_out @jack
+            elsif i == 1
+              sign_in @jane
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[0] = false
+              true while wait_post[1]
+              assert_difference 'User.count', -1 do
+                delete user_registration_path
+              end
+              status[1] = (User.find_by(id: @jane.id).nil? == true)
+            end
+        end
+      end
+      should_wait = false
+      threads.each(&:join)
+
+      assert status[0] != status[1]
+    ensure
+      ActiveRecord::Base.connection_pool.disconnect!
+    end
+  end
+
+  test "should catch race condition where one user cancels requests and the other deletes it" do
+    begin
+
+      assert_equal 5, ActiveRecord::Base.connection.pool.size
+      concurrency_level = 2
+      should_wait = true
+
+      status = {}
+      wait_post = [true, true]
+
+      threads = Array.new(concurrency_level) do |i|
+        Thread.new do
+          # wait for both threads to be initialized
+          true while should_wait
+            if i == 0
+              sign_in @jack
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[1] = false
+              true while wait_post[0]
+              delete comrade_request_path(@jack_and_jill.id)
+              sign_out @jack
+            elsif i == 1
+              sign_in @jill
+              get root_url
+              # wait for other thread to login and get root_url
+              wait_post[0] = false
+              true while wait_post[1]
+              delete comrade_request_path(@jack_and_jill.id)
+              sign_out @jill
+            end
+        end
+      end
+      should_wait = false
+      threads.each(&:join)
+
+    ensure
+      ActiveRecord::Base.connection_pool.disconnect!
+    end
+  end
 end

@@ -1,4 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
+  include ApplicationHelper
 
   def create
     super
@@ -10,6 +11,12 @@ class RegistrationsController < Devise::RegistrationsController
 
   def update
     super
+  end
+
+  def destroy
+    Comrade.with_advisory_lock(comrade_request) do
+      super
+    end
   end
 
   private
