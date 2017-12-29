@@ -5,6 +5,7 @@
 
 body {
   padding-top: 60px;
+  background-color: #e9ebee;
 }
 
 section {
@@ -163,6 +164,8 @@ p, li {
 
 .post {
   margin: 3px 0;
+  background-color: white;
+  border-radius: 3px;
 }
 
 .post-info {
@@ -177,10 +180,6 @@ p, li {
   font-size: 16px;
   margin-top:auto;
   margin-bottom:auto;
-}
-
-.border {
-  border: 1px solid;
 }
 
 .no-side-border {
@@ -200,6 +199,10 @@ p, li {
   font-size: 16px;
   margin-top: auto;
   margin-bottom: auto;
+}
+
+.comments-wrapper {
+  background-color: aliceblue
 }
 
 .comment-info {
