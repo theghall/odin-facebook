@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root 'static_pages#home'
+  get '/privacy', to: 'static_pages#privacy'
   devise_for :users, 
     controllers: { confirmations: 'confirmations', registrations: 'registrations', omniauth_callbacks: 'omniauth_callbacks' }
   get '/profile/:id', to: 'user#show', as: :profile
