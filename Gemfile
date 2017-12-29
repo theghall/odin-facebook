@@ -31,6 +31,7 @@ gem 'figaro', '~>1.1'
 gem 'devise', '~> 4.3'
 gem 'omniauth-facebook', '~> 4.0'
 # Images
+gem 'fog', '~> 1.42', require: 'fog/aws'
 gem 'carrierwave', '~> 1.2'
 gem 'mini_magick', '~> 4.8'
 group :development, :test do
