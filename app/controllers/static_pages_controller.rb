@@ -9,4 +9,9 @@ class StaticPagesController < ApplicationController
      @posts = User.feed(current_user)
     end
   end
+
+  def privacy
+
+  end
+
 end
