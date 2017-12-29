@@ -39,12 +39,19 @@ class ComradeRequestsController < ApplicationController
 
   def destroy
     begin
-      requestee_id = destroy_request(params[:id])
+      request = Comrade.find(params[:id])
+
+      destroy_request(params[:id])
+
+      if current_user.id == request.requestor_id
+        redirect_to profile_path(request.requestee_id)
+      else
+        redirect_to comrade_requests_path
+      end
     rescue ActiveRecord::RecordNotFound
       flash[:alert] = "The other user aleady performed that action"
+      redirect_to root_url
     end
-
-    redirect_to (requestee_id.nil? ? profiles_path : profile_path(requestee_id))
   end
 
   private

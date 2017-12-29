@@ -298,7 +298,7 @@ class ClientFlowTest < ActionDispatch::IntegrationTest
     sign_out @jack
     sign_in @jill
     delete comrade_request_path(@jack_and_jill.id)
-    assert_redirected_to profiles_path
+    assert_redirected_to root_url
     assert_not flash.empty?
     sign_out @jill
   end
