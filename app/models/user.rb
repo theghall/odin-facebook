@@ -78,7 +78,7 @@ class User < ApplicationRecord
       user.uid = auth.uid
       user.name = auth.info.name
       user.email = auth.info.email
-      user.remote_profile_pic_url = auth.info.image
+      #user.remote_profile_pic_url = auth.info.image
       user.oauth_token = auth.credentials.token
       user.oauth_expires_at = Time.at(auth.credentials.expires_at)
       user.skip_confirmation! if user.id.nil?
