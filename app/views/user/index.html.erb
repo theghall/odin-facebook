@@ -5,7 +5,7 @@
   <ul>
   <% @users.each do |u| %>
     <li>
-      <%= image_tag u.profile_pic.url %>
+      <%= image_tag u.profile_pic.thumb.url %>
       <%= link_to u.name, profile_path(u) %>
     </li>
   <% end %>

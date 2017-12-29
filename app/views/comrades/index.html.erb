@@ -5,7 +5,7 @@
   <% @comrades.each do |c| %>
   <div class='comrade-row'>
     <div class='comrade-info'>
-      <%= image_tag(c.profile_pic.url) %>
+      <%= image_tag(c.profile_pic.thumb.url) %>
       <p><%= link_to c.name, profile_path(c) %></p>
     </div>
     <div class='manage-request'>

@@ -4,7 +4,9 @@ class ProfilePicUploader < CarrierWave::Uploader::Base
   # include CarrierWave::RMagick
   include CarrierWave::MiniMagick
 
-  process :resize_to_fit => [40, 40]
+  version :thumb do
+    process :resize_to_fit => [40, 40]
+  end
 
   # Choose what kind of storage to use for this uploader:
   storage :file
