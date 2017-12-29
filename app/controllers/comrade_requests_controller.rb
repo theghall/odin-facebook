@@ -10,8 +10,10 @@ class ComradeRequestsController < ApplicationController
   def update
     request = Comrade.find(params[:id])
 
-    if !request.update(accepted: true)
-      flash[:alert] = 'Comrade request was not able to be accepted.' 
+    Comrade.with_advisory_lock(comrade_request) do
+      if !request.update(accepted: true)
+       flash[:alert] = 'Comrade request was not able to be accepted.' 
+      end
     end
 
     redirect_to comrades_path
